@@ -1,0 +1,118 @@
+---
+title: "Answer Key to HW3"
+output:
+  word_document: default
+  pdf_document: default
+---
+
+# Properties of Confidence
+
+(a) Suppose that $conf(A \rightarrow B) = c_1$, $conf(A \rightarrow BC) = c_2$, $conf(AC \rightarrow B) = c_3$, respectively. 
+Which rule has the lowest confidence?
+
+## Answer:
+
+>>First, we show that $c_2 \leq c_3$: (or due to anti-monotone property)
+>>$c_2=conf(A \rightarrow BC) =\sigma(ABC)/\sigma(A)$,
+$c_3=conf(AC \rightarrow B) =\sigma(ABC)/\sigma(AC)$,
+and $\sigma(A) \ge \sigma(AC)$
+
+>>Second, we show that $c_2 \leq c_1$: 
+>>$c_2=conf(A \rightarrow BC) =\sigma(ABC)/\sigma(A)$,
+$c_1=conf(A \rightarrow B) =\sigma(AB)/\sigma(A)$
+and $\sigma(AB) \ge \sigma(ABC)$
+
+>>Therefore, rule $c_2$ has the lowest confidence. 
+
+(b) For the above question, if these rules have the same support, which rule has the highest confidence?
+
+## Answer:
+
+>>First, $c_2 \leq c_3$ as shown above. 
+
+>>Second, we show that $c_1=c_2$: Since $supp(A \rightarrow B) = supp(A \rightarrow BC)$, 
+$\sigma(AB) = \sigma(ABC)$.
+Then $\sigma(AB)/\sigma(A) = \sigma(ABC)/\sigma(A)$,
+which means $conf(A \rightarrow B) = conf(A \rightarrow BC)$.  
+
+>>Therefore, rule $c_3$ has the highest confidence. 
+
+# Cosmetics Purchases
+
+A drug store chain wants to learn more about cosmetics buyers purchase patterns.  
+Specifically, they want to know what items are purchased in conjunction with each other, 
+for purposes of display, point of sale special offers, and to 
+eventually implement a real time recommender system to cross-sell items at time of purchase.
+
+The cosmetics purchases dataset has the purchase records saved in the form of a matrix.
+More specifically, each column represents a product group, and each row a customer transaction.
+
+```{r}
+setwd("C:\\UTK\\Data Mining")
+data <- read.csv("Cosmetics.csv", row.names = 1)
+head(data, 3) # a few sample lines
+```
+
+Consider the follwoing association rules found from the data. Answer the few questions that follow.
+```{r}
+# Rule # Conf. (%)       Antecedent (a)        Consequent (c) Support Count (a) Support Count (c) Support Count (a U c) Lift Ratio 
+#      2     60.19 Bronzer, Nail Polish => Brushes, Concealer               103                77                  62     3.908713
+```
+
+(1) Explain the "Conf. (%)" output and how it is calculated.
+
+## Answer:
+
+>> "Conf. (%)" is the confidence of a rule. 
+In this question, it means $60.19%$ people who bought Bronzer and Nail Polish also bought Brushes and Concealer. It is calculated by the number of transactions having {Bronzer, Nail Polish ,Brushes, Concealer} divided by the number of transactions having {Bronzer, Nail Polish}, i.e., $62 / 103$ = $0.6019$.
+
+
+(2) Explain the "Support Count ($a$), Support Count ($c$) and Support Count ($a \cup c$)" output and how they are calculated.
+
+## Answer:
+>> $a  =103$ means there are $103$ transactions in which people only bought $\{Bronzer, Nail Polish\}$.
+>> $c = 77$ means there are $77$ transactions in which people only bought $\{Brushes, Concealer\}$ .
+>> $a \cup c = 103$ means there are $62$ transactions in which people bought both $\{Bronzer, Nail Polish\}$ and $\{Brushes, Concealer\}$.
+>> They are calculated by scanning the whole dataset. Or, they can be calculated by support times the total number of transactions. 
+
+
+
+(3) Explain the "Lift Ratio" and how it is calculated.
+
+## Answer:
+>> Lift ratio is to measure the statistical dependence. It measures performance of the new model $P(\{Bronzer, Nail.Polish\} | \{Brushes, Concealer\})$ compared with the base model $P(\{Bronzer, Nail.Polish\})$. It is calculated by their ratio, i.e., $P(\{Bronzer, Nail.Polish\} | \{Brushes, Concealer\}) / P(\{Bronzer, Nail.Polish\})$. The lift ratio is $3.909$ means $\{Brushes, Concealer\}$ and $\{Bronzer, Nail.Polish\}$ are positively corelated and the performance is improved by $3.909$ times after using the new model. 
+
+
+(4) Explain the rule in words considering the real-world interpretations. 
+
+## Answer:
+>>The rule means people who bought Bronzer and Nail Polish also bought Brushes and Concealer. The meausres of this rule have been explained in previous questions.
+
+(5) Based on a subset of 500 cosmetic purchase transactions, 
+suppose that we find the following rule: 
+
+$\{Bronzer, Nail Polish\} \rightarrow \{Brushes, Concealer\}$
+
+Suppose further that we find: 
+
+$\sigma(\{Bronzer, Nail Polish\}) = 103$
+
+$\sigma(\{Brushes, Concealer\}) = 77$
+
+$\sigma(\{Bronzer, Nail Polish, Brushes, Concealer\}) = 62$
+
+where $\sigma(X)$ represents the support count for a given itemset $X$. 
+Find the confidence and lift of the rule found. 
+Interpret these values in context. 
+
+## Answer:
+
+>>$Confidence({Bronzer,NailPolish}\rightarrow{Brushes,Concealer})
+=(Support({Bronzer,NailPolish,Brushes,Concealer}))/(Support({Bronzer,NailPolish}))
+=62/103=0.602$
+
+>>$Lift({Bronzer,NailPolish}\rightarrow{Brushes,Concealer})
+=(Confidence(Bronzer,NailPolish,Brushes,Concealer))/(Support(Bronzer,NailPolish))
+=(62/103)/(77/500)=3.909$
+
+>>For a customer who buys Bronzer and Nail Polish, there is $60.2%$ chance that she will buy Brushes and Concealer as well. Knowing that a customer buys Bronzer and Nail Polish will increase the chance of buying Brushes and Concealer by a factor of $3.909$.
